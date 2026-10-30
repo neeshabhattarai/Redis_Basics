@@ -50,3 +50,27 @@ SETEX key <second> value
 ```
 GETEX key <second>
 ```
+
+9. For increasing number count 
+
+```
+INCR <key>
+```
+
+10. For increasing number count by certain value
+
+```
+INCRBY <key> 5
+```
+
+11. For decreasing number count by certain value
+
+```
+DECRBY <key> 5
+```
+
+12. For decreasing number count 
+
+```
+DECR <key>
+```
