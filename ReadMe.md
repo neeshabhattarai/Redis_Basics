@@ -186,6 +186,11 @@ hset("<key>:<value>",value)
 ``` redis
 hget("<key>:<value>",value)
 ```
+### 27. For getting string length
+
+``` redis
+hstrlen key
+```
 
 ## Quick Reference
 
