@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-redis-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: node-redis
+  template:
+    metadata:
+      labels:
+        app: node-redis
+    spec:
+      containers:
+        - name: node
+          image: bhattarai2003/rediswithnode:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+          imagePullPolicy: Always

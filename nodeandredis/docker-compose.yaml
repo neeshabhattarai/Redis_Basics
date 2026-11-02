@@ -1,5 +1,6 @@
 services:
   rediswithnode:
+    image: bhattarai2003/rediswithnode:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,7 +15,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
   redis:
-    image: redis:latest
+    image: bhattarai2003/redis:latest
     restart: always
     container_name: redis
     ports:

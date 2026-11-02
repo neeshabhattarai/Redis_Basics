@@ -1,41 +1,57 @@
 const express = require('express');
-const redis = require('redis');
-
 const app = express();
+const {createUser, getUser} = require('./services/UserService');
+const {createSession, getSession, deleteSession} = require('./services/Session');
+const {batchProcessing} = require('./services/BatchProcessing');
 
-const client = redis.createClient({
-    socket: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-    },
+app.use(express.json());
+
+app.post('/createUser', async (req, res) => {
+    const user = req.body;
+    console.log(user);
+    const id = await createUser(user);
+    res.status(200).json({id});
 });
 
-// client.on('connect', () => {
-//   console.log('Connected to Redis');
-// });
-
-app.get('/', async (req, res) => {
-    try {
-        const visits = await client.get('visits');
-        res.send('Number of visits is ' + visits);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error getting visits');
-    }
-    // res.send('Hello World');
+app.get('/getUser/:id', async (req, res) => {
+    const id = req.params.id;
+    const user = await getUser(id);
+    console.log(user);
+    res.status(200).json(user);
 });
 
-async function getConnectedClient(){
-    try {
-        await client.connect();
-        console.log('Connected to Redis');
-        app.listen(3000, () => {
-            client.set('visits', 0);
-            console.log('Server is running on port 3000');
-        });
-    } catch (error) {
-        console.error(error);
-        throw error;
+app.post('/login', async (req, res) => {
+    const user = req.body;
+    const existingUser = await getUser(user.id);
+    if(!existingUser){
+        return res.status(401).json({message: 'User not found'});
     }
-}
-getConnectedClient();
+    console.log(existingUser.password, user.password);
+    if(existingUser.password !== user.password){
+        return res.status(401).json({message: 'Invalid password'});
+    }
+    const id = await createSession(user);
+    res.status(200).json({id});
+});
+
+app.get('/getSession/:id', async (req, res) => {
+    const id = req.params.id;
+    const session = await getSession(id);
+    res.status(200).json(session);
+});
+
+app.delete('/deleteSession/:id', async (req, res) => {
+    const id = req.params.id;
+    await deleteSession(id);
+    res.status(200).json({message: 'Session deleted'});
+});
+
+app.get('/batchProcessing', async (req, res) => {
+    const results = await batchProcessing();
+    res.status(200).json(results);
+});
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
+
+
