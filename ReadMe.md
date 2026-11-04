@@ -192,6 +192,69 @@ hget("<key>:<value>",value)
 hstrlen key
 ```
 
+## Starting with set
+
+### 28. For adding set element
+```bash
+SADD key:1 value value value
+#SADD colors:1 red blue green
+```
+
+### 29. For fetching all the members
+```bash
+SMEMBERS key:1
+#SMEMBERS colors:1 
+```
+
+### 30. For union intersection and difference
+```bash
+SUNION key:1 key:2 key:3
+SINTER key:1 key:2 key:3
+SDIFF key:1 key:2 key:3
+#SUNION colors:1 colors:2 colors:3
+#SINTER colors:1 colors:2 colors:3
+#SDIFF colors:1 colors:2 colors:3
+```
+
+### 31. For union intersection and difference store
+```bash
+SUNIONSTORE key:union key:1 key:2 key:3
+SINTERSTORE key:inter key:1 key:2 key:3
+SDIFFSTORE key:inter key:1 key:2 key:3
+#SUNIONSTORE colors:union colors:1 colors:2 colors:3
+#SINTERSTORE colors:inter colors:1 colors:2 colors:3
+```
+
+### 32. For scanning the element using cursor
+```bash
+SSCAN key:index 0 COUNT 1
+# SSCAN colors:2 0 COUNT 1
+```
+
+### 33. For checking cardinality
+```bash
+SCARD key:index
+# SCARD colors:1
+```
+
+### 34. For removing one element
+```bash
+SREM key:index value
+# SREM colors:1 green
+```
+
+### 35. For checking one element
+```bash
+SISMEMBER key:index value
+# SISMEMBER colors:1 blue
+```
+
+### 36. For checking multiple element
+```bash
+SMISMEMBER key:index value value
+# SMISMEMBER colors:1 blue red
+```
+
 ## Quick Reference
 
   Command          Purpose
