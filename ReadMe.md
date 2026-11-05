@@ -294,6 +294,28 @@ ZPOPMAX setname value
 ZPOPMIN setname value
 ```
 
+### 43. For updating value
+
+```bash 
+ZINCRBY setname value member
+```
+
+### 44. For finding members with range
+
+```bash 
+ZINCRBY setname value member
+### 43. For updating value
+
+```bash 
+ZINCRBY setname index/score (if score then add BYSCORE)(to get all score value add WITHSCORES)
+# ZRANGE products 1 2 WITHSCORES
+
+# ZRANGE products 0 50 WITHSCORES
+
+# ZRANGE products 0 50 BYSCORE  WITHSCORES
+
+```
+
 ## Quick Reference
 
   Command          Purpose
