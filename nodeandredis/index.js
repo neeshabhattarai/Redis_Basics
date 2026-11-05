@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const itemRouter = require('./routes/Item');
+const likesRouter = require('./routes/Likes');
 const {createUser, getUser} = require('./services/UserService');
 const {createSession, getSession, deleteSession} = require('./services/Session');
 const {batchProcessing} = require('./services/BatchProcessing');
@@ -12,6 +14,8 @@ app.post('/createUser', async (req, res) => {
     const id = await createUser(user);
     res.status(200).json({id});
 });
+app.use('/items', itemRouter);
+app.use('/likes', likesRouter);
 
 app.get('/getUser/:id', async (req, res) => {
     const id = req.params.id;

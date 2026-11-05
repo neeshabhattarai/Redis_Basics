@@ -45,4 +45,12 @@ const deserializeSession = ({ id, session }) => {
   };
 };
 
-module.exports = { userKey, genUserId, serialize, deserialize, sessionKey, serializeSession, deserializeSession ,genSessionId};
+const userLikesKey = (userId) => {
+  return `user:${userId}:likes`;
+};
+
+const itemKey = (id) => {
+  return `item:${id}`;
+};
+
+module.exports = { userKey, genUserId, serialize, deserialize, sessionKey, serializeSession, deserializeSession ,genSessionId,userLikesKey,itemKey};

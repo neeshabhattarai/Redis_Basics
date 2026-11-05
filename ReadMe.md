@@ -255,6 +255,45 @@ SMISMEMBER key:index value value
 # SMISMEMBER colors:1 blue red
 ```
 
+## For Sorted Sets
+
+### 36. For adding member and score
+
+```bash 
+ZADD setname score member
+```
+
+### 37. For finding score
+
+### 38. For counting total number of members
+
+```bash 
+ZCARD setname
+```
+
+### 39. For removing members
+
+```bash 
+ZREM setname member
+```
+
+### 40. For finding between two range count
+
+```bash 
+ZCOUNT setname score1 score1
+```
+
+### 41. For removing maximum element
+
+```bash 
+ZPOPMAX setname value
+```
+### 42. For removing minimum element
+
+```bash 
+ZPOPMIN setname value
+```
+
 ## Quick Reference
 
   Command          Purpose

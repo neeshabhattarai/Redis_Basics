@@ -2,7 +2,7 @@ const {client} = require('../model/RedisConnector');
 const {sessionKey, serializeSession, deserializeSession, genSessionId} = require('../utils/Key');
 
 const createSession = async (user) => {
-    console.log(user);
+    // console.log(user);
     const session = serializeSession(user);
     const id =genSessionId();
 
