@@ -5,6 +5,7 @@ const likesRouter = require('./routes/Likes');
 const {createUser, getUser} = require('./services/UserService');
 const {createSession, getSession, deleteSession} = require('./services/Session');
 const {batchProcessing} = require('./services/BatchProcessing');
+const {DataSave, DataGet} = require('./services/DataSave');
 
 app.use(express.json());
 
@@ -53,6 +54,17 @@ app.delete('/deleteSession/:id', async (req, res) => {
 app.get('/batchProcessing', async (req, res) => {
     const results = await batchProcessing();
     res.status(200).json(results);
+});
+
+app.post('/dataSave', async (req, res) => {
+    const data = req.body;
+    const result = await DataSave(data);
+    res.status(200).json(result);
+});
+
+app.get('/dataGet', async (req, res) => {
+    const data = await DataGet();
+    res.status(200).json(data);
 });
 app.listen(3000, () => {
     console.log('Server is running on port 3000');

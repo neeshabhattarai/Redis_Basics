@@ -23,3 +23,10 @@ spec:
             - name: REDIS_PORT
               value: "6379"
           imagePullPolicy: Always
+          volumeMounts:
+            - name: data-volume
+              mountPath: /app/data
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: data-pvc

@@ -314,6 +314,10 @@ ZINCRBY setname index/score (if score then add BYSCORE)(to get all score value a
 
 # ZRANGE products 0 50 BYSCORE  WITHSCORES
 
+#ZRANGE prouducts 1 2 REV
+
+#ZRANGE products 0 50 BYSCORE WITHSCORES LIMIT 1 2
+
 ```
 
 ## Quick Reference
