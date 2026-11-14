@@ -52,7 +52,8 @@ app.get("/", (req, res) => {
 });
 
 app.post("/addView", async (req, res) => {
-  const {itemKey}=req.body;
+  const {name}=req.body;
+const itemKey=`item:${name}`;
 
   await Promise.all([
     redisClient.hIncrBy(itemKey, "view", 1),
@@ -66,6 +67,25 @@ app.post("/getScoreItem", async (req, res) => {
   res.status(200).send({message:"Top item get successfully",result});
 });
 
+app.get("/getTopItems", async (req, res) => {
+  const result=await redisClient.zRangeWithScores(itemViewKey(), 10, 0,{
+    BY:"SCORE",
+    REV:true,
+    LIMIT:{ 
+      offset:0,
+      count:10,
+    }
+  });
+  res.status(200).send({message:"Top items get successfully",result});
+});  
+
+app.get("/sortItem", async (req, res) => {
+  const result=await redisClient.sort(itemViewKey(), {
+    GET:["#",`*->name`],
+    BY:"score"
+  });
+  res.status(200).send({message:"Top items get successfully",result});
+});
 const startServer = async () => {
   try {
       await connectRedis();
