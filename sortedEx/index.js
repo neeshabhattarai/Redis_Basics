@@ -2,7 +2,7 @@ const express = require("express");
 const redis = require("redis");
 const app = express();
 const itemViewKey=()=>"itemView";
-
+const itemKey=()=>"item";
 app.use(express.json());
 
 const redisClient = redis.createClient({
@@ -22,8 +22,8 @@ app.post("/setItem", async (req, res) => {
   const {name}=req.body;
   const key=`item:${name}`;
   await Promise.all([
-    redisClient.hSet(key, {name,view:0}),
-    redisClient.zAdd(itemViewKey(), {score:0, value:key}),
+    redisClient.hSet(key, {name:name,view:0}),
+    redisClient.zAdd(itemViewKey(), {score:0, value:name}),
   ]);
   res.status(200).send({message:"Item set successfully",key});
 });
@@ -37,7 +37,6 @@ app.get("/getItem", async (req, res) => {
   }else{
     res.status(500).send({message:"Failed to get item"});
   }
-  res.send(result);
 });
 
 app.post("/addProduct", async (req, res) => {
@@ -57,13 +56,13 @@ const itemKey=`item:${name}`;
 
   await Promise.all([
     redisClient.hIncrBy(itemKey, "view", 1),
-    redisClient.zIncrBy(itemViewKey(), 1, itemKey),
+    redisClient.zIncrBy(itemViewKey(), 1, name),
   ]);
   res.status(200).send({message:"View added successfully",itemKey});
 });
 app.post("/getScoreItem", async (req, res) => {
   const {itemKey}=req.body;
-  const result=await redisClient.zScore(itemViewKey(), itemKey);
+  const result=await redisClient.zScore(itemViewKey(), `item:${itemKey}`);
   res.status(200).send({message:"Top item get successfully",result});
 });
 
@@ -81,10 +80,29 @@ app.get("/getTopItems", async (req, res) => {
 
 app.get("/sortItem", async (req, res) => {
   const result=await redisClient.sort(itemViewKey(), {
-    GET:["#",`*->name`],
-    BY:"score"
+    BY:"item:*->view",
+    DIRECTION: "ASC",
+    GET:[`#`,itemKey()+":*->view"],
+    LIMIT:{
+      offset:0,
+      count:10,
+    },
   });
+  console.log(result);
   res.status(200).send({message:"Top items get successfully",result});
+});
+
+app.post("/deleteItem", async (req, res) => {
+  const {name}=req.body;
+  const key=`item:${name}`;
+  await redisClient.zRem(itemViewKey(), name);
+  await redisClient.hDel(key, "name", "view");
+  res.status(200).send({message:"Item deleted successfully",key});
+});
+
+app.get("/allitems",async (req,res)=>{
+  const result=await redisClient.zRangeWithScores(itemViewKey(), 0, -1);
+  res.status(200).send({message:"All items get successfully",result});
 });
 const startServer = async () => {
   try {

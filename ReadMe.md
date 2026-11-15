@@ -320,6 +320,21 @@ ZINCRBY setname index/score (if score then add BYSCORE)(to get all score value a
 
 ```
 
+## working with sort
+```bash
+hSet books:5 name english color blue
+hSet books:10 name science color red
+hSet books:15 name maths color purple
+
+zAdd books:likes 10 books:5
+zAdd books:likes 5 books:10
+zAdd books:likes 15 books:15
+
+SORT books:likes GET # GET books:*->name BY score ASC
+
+```
+
+
 ## Quick Reference
 
   Command          Purpose
