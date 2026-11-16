@@ -308,11 +308,11 @@ ZINCRBY setname value member
 
 ```bash 
 ZINCRBY setname index/score (if score then add BYSCORE)(to get all score value add WITHSCORES)
-# ZRANGE products 1 2 WITHSCORES
+#ZRANGE products 1 2 WITHSCORES
 
-# ZRANGE products 0 50 WITHSCORES
+#ZRANGE products 0 50 WITHSCORES
 
-# ZRANGE products 0 50 BYSCORE  WITHSCORES
+#ZRANGE products 0 50 BYSCORE  WITHSCORES
 
 #ZRANGE prouducts 1 2 REV
 
@@ -320,7 +320,7 @@ ZINCRBY setname index/score (if score then add BYSCORE)(to get all score value a
 
 ```
 
-## working with sort
+### working with sort
 ```bash
 hSet books:5 name english color blue
 hSet books:10 name science color red
@@ -333,7 +333,22 @@ zAdd books:likes 15 books:15
 SORT books:likes GET # GET books:*->name BY score ASC
 
 ```
-
+## Hyperloglogs-> Used to store the unique elements 
+### working with hyperloglog
+```bash
+PFADD key value
+#PFADD vegetables cabbage
+```
+## Working with the sort in nodejs
+```bash
+client.sort(key,{
+GET:[#,'books:*->name'],
+BY:"SCORE","KEY"
+DIRECTION:'"DESC" OR "ASC"'
+LIMIT:{
+offset,
+count}
+})
 
 ## Quick Reference
 
