@@ -10,6 +10,9 @@ const addItem = async (req, res) => {
   const result = await redisClient.hSet(key, {
     name: name,
     likes: 0,
+    bidsCount: 0,
+    highestBid:0,
+    highestBidUser:'',
   });
   if (result) {
     return res.status(200).send({ message: "Item added successfully" });

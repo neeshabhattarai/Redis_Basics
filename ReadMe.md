@@ -349,6 +349,39 @@ LIMIT:{
 offset,
 count}
 })
+```
+### Learning List
+```bash
+LPUSH fruits apple
+RPUSH fruits mango-> to push it from right
+LPUSH fruits apple -> to push it from left
+
+LRANGE fruits 0 -1 -> to find in those range 
+
+LPOS fruits apple RANK 2 COUNT 2 MAXLEN 10-> for searching
+
+LPUSH number 1
+RPUSH number 2
+LPUSH number 3
+RPUSH number 4 
+RPUSH number 5
+RPUSH number 6
+
+
+LPOP number 1--> to pop from left element count
+LINDEX number 0--> to get value of that index
+RPOP number 2--> to pop from right element count
+LRANGE number 0 -1
+
+LSET number 0 19--> to modify value on that index
+LINDEX number 0
+LTRIM number 1 3--> to trim other value start and end is given
+
+LINSERT number before 4 5 --> to insert before 4 
+LREM number 1 2--> to remove from + means left and -means right one count number 2
+LRANGE number 0 -1
+
+```
 
 ## Quick Reference
 
