@@ -382,6 +382,13 @@ LREM number 1 2--> to remove from + means left and -means right one count number
 LRANGE number 0 -1
 
 ```
+### Transaction in Redis
+
+```bash
+WATCH
+MULTI
+EXEC
+```
 
 ## Quick Reference
 
