@@ -390,6 +390,13 @@ MULTI
 EXEC
 ```
 
+## LUA script
+```bash
+SCRIPT load "return 1+1"
+EVAL "id"
+SCRIPT load "return 1+tonumber(ARGV[1])"
+EVALSHA "id" 0 10
+
 ## Quick Reference
 
   Command          Purpose
