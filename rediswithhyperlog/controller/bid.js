@@ -8,6 +8,7 @@ const {
   userBidListKey,
   bidListKey,
 } = require("../service/key");
+const { createLock } = require("../service/lock");
 const createBid = async (req, res) => {
   const { amount, name, userId } = req.body;
   if (!name || !userId || !amount) {
@@ -22,33 +23,51 @@ const createBid = async (req, res) => {
  
   const dateInMilliseconds = DateTime.now().toMillis();
   const serializedBid = serializeBid(amount, dateInMilliseconds);
-  const result = await redisClient.storeHighestBid(
-    itemKey(name),
-    bidListKey(),
-    highestBidKey(),
-    userBidListKey(userId),
-    serializedBid,
-    name,
-    amount,
-    userId,
-  );
-  if (result[0] == 1) {
-    return res.status(200).json({ message: "Bid created successfully" });
-  }
-  if (result[0] == -1) {
-    return res.status(404).json({ message: "Item not found" });
-  }
-  if (result[0] == -2) {
+
+  if(Number(amount)<=Number(item.highestBid)){
     return res.status(400).json({ message: "Bid amount is less than the highest bid" });
   }
-  if (result[0] == -3) {
-    return res.status(400).json({ message: "Bid amount is less than the current highest bid" });
-  }
+  await createLock(itemKey(name),async()=>{
+    await redisClient.rPush(bidListKey(),serializedBid);
+      await redisClient.hSet(itemKey(name),{
+          highestBid:amount,
+          highestBidUser:userId,
+          bidsCount:`${Number(item.bidsCount)+1}`.toString(),
+      });
+      await redisClient.sAdd(userBidListKey(userId),serializedBid);
+      await redisClient.zAdd(highestBidKey(),{
+          score:Number(amount),
+          value:name,
+      });
+      return res.status(200).json({ message: "Bid created successfully" });
+  });
+  // const result = await redisClient.storeHighestBid(
+  //   itemKey(name),
+  //   bidListKey(),
+  //   highestBidKey(),
+  //   userBidListKey(userId),
+  //   serializedBid,
+  //   name,
+  //   amount,
+  //   userId,
+  // );
+  // if (result[0] == 1) {
+  //   return res.status(200).json({ message: "Bid created successfully" });
+  // }
+  // if (result[0] == -1) {
+  //   return res.status(404).json({ message: "Item not found" });
+  // }
+  // if (result[0] == -2) {
+  //   return res.status(400).json({ message: "Bid amount is less than the highest bid" });
+  // }
+  // if (result[0] == -3) {
+  //   return res.status(400).json({ message: "Bid amount is less than the current highest bid" });
+  // }
 //using watch and multi to create bid
   // await redisClient.executeIsolated(async(client)=>{
   //     await redisClient.watch(itemKey(name));
   //     const multi=await client.multi();
-  //     multi.rPush(bidListKey(),serializeBid(amount,dateInMilliseconds));
+  //     multi.rPush(bidListKey(),serializedBid);
   //     multi.hSet(itemKey(name),{
   //         highestBid:amount,
   //         highestBidUser:userId,
@@ -103,4 +122,5 @@ const getBidOfUser = async (req, res) => {
   });
   res.status(200).json({ bids: bidsData });
 };
+
 module.exports = { createBid, getBids, getUserBids, getBidOfUser };
