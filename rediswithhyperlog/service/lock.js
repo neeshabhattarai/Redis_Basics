@@ -16,19 +16,41 @@ const createLock = async (key,cb) => {
             continue;
         }
         try{
-          return await cb();
+            const signal={expired:false};
+            setTimeout(()=>{
+                signal.expired=true;
+            },4000);
+            const proxy=await buildProxy(3000);
+        //    await acquire(3500);
+
+          return await cb(proxy,signal);
              
         }finally{
-            await redisClient.del(lockKey);
+            await redisClient.releaseLock(lockKey,lockValue);
         }
     }
 };
 
 const acquire=async(timeout)=>{
-    await new Promise(resolve=>{
+ return await new Promise(resolve=>{
        setTimeout(resolve,timeout);
     });
 }
+
+const buildProxy=async(timeout)=>{
+    const startTime=Date.now();
+    const handler={
+        get:(target,prop)=>{
+            if(Date.now()>=startTime+timeout){
+                throw new Error('Lock timeout');
+            }
+            const value=target[prop];
+          return  typeof value==='function'?value.bind(target):value;
+        }
+    }
+    return new Proxy(redisClient,handler);
+}
+
 module.exports={
     createLock
 }

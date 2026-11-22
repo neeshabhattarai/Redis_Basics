@@ -27,15 +27,16 @@ const createBid = async (req, res) => {
   if(Number(amount)<=Number(item.highestBid)){
     return res.status(400).json({ message: "Bid amount is less than the highest bid" });
   }
-  await createLock(itemKey(name),async()=>{
-    await redisClient.rPush(bidListKey(),serializedBid);
-      await redisClient.hSet(itemKey(name),{
+  await createLock(itemKey(name),async(proxy,signal)=>{
+
+    await proxy.rPush(bidListKey(),serializedBid);
+      await proxy.hSet(itemKey(name),{
           highestBid:amount,
           highestBidUser:userId,
           bidsCount:`${Number(item.bidsCount)+1}`.toString(),
       });
-      await redisClient.sAdd(userBidListKey(userId),serializedBid);
-      await redisClient.zAdd(highestBidKey(),{
+      await proxy.sAdd(userBidListKey(userId),serializedBid);
+      await proxy.zAdd(highestBidKey(),{
           score:Number(amount),
           value:name,
       });

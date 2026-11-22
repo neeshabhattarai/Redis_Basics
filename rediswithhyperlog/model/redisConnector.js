@@ -7,6 +7,18 @@ const redisClient = createClient({
   },
   // password: process.env.REDIS_PASSWORD,
   scripts: {
+    releaseLock: defineScript({
+      NUMBER_OF_KEYS: 1,
+      SCRIPT: `
+       if(redis.call('GET',KEYS[1]) == ARGV[1]) then
+        return redis.call('DEL',KEYS[1])
+       else
+        return 0
+       end
+      `,
+      transformArguments: (key,lockValue) => [String(key),String(lockValue)],
+      transformReply: (reply) => reply,
+    }),
     getHighestBid: defineScript({
       NUMBER_OF_KEYS: 1,
       SCRIPT: `
