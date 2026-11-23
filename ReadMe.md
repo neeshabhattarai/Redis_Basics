@@ -396,6 +396,25 @@ SCRIPT load "return 1+1"
 EVAL "id"
 SCRIPT load "return 1+tonumber(ARGV[1])"
 EVALSHA "id" 0 10
+```
+
+## Redis Search and Redis Quering
+
+```bash
+FT.CREATE index ON <TYPE>(HASH | STRING | SORTED SET) PREFIX <prefixtotalnum> <starname> SCHEMA name (text | tag) year (numeric)
+
+# FT.CREATE idx:cars ON HASH PREFIX 1 cars: SCHEMA name text color tag
+()-> text, {}->tag ,[]-> numeric
+for searching
+FT.SEARCH idx:fruits "@name:(apple | mango)"
+FT.SEARCH idx:fruits "@color:{red}"
+FT.SEARCH idx:fruits "-@color:{red}"
+FT.SEARCH idx:fruits "@color:{%ed%}"-> to skip one letter perfect maching %%-> this means two
+FT.SEARCH idx:fruits "@name:(best/apple)"->/means space
+FT.SEARCH idx:fruits "@year:[1920 1930]"
+FT.SEARCH idx:fruits "@color:{re*}"--> wildcard search
+
+```
 
 ## Quick Reference
 
