@@ -402,8 +402,7 @@ EVALSHA "id" 0 10
 
 ```bash
 FT.CREATE index ON <TYPE>(HASH | STRING | SORTED SET) PREFIX <prefixtotalnum> <starname> SCHEMA name (text | tag) year (numeric)
-
-# FT.CREATE idx:cars ON HASH PREFIX 1 cars: SCHEMA name text color tag
+#FT.CREATE idx:cars ON HASH PREFIX 1 cars: SCHEMA name text color tag
 ()-> text, {}->tag ,[]-> numeric
 for searching
 FT.SEARCH idx:fruits "@name:(apple | mango)"
