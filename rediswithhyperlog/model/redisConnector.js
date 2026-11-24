@@ -1,4 +1,5 @@
 const { createClient, defineScript } = require("redis");
+const { createIndex } = require("../service/search");
 
 const redisClient = createClient({
   socket: {
@@ -76,6 +77,10 @@ const redisClient = createClient({
       transformReply: (reply) => [reply[0],reply[1],reply[2],reply[3]],
     }),
   },
+});
+
+redisClient.on('connect',async()=>{
+  await createIndex(redisClient);
 });
 
 const connectRedis = async () => {

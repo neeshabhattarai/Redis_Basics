@@ -1,5 +1,6 @@
 const redisClient = require("../model/redisConnector");
 const { itemKey } = require("../service/key");
+const { searchItems } = require("../service/search");
 
 const addItem = async (req, res) => {
   const { name } = req.body;
@@ -81,4 +82,21 @@ const getLikes = async (req, res) => {
   const result = await redisClient.hGet(key, "likes");
   return res.status(200).send({ message: "Likes fetched successfully",result });
 };
-module.exports = { addItem, getItem, updateView, deleteItem ,getView,getAllItems,getLikes };
+const searchTerm = async (req, res) => {
+  const { term } = req.params;
+  const size = req.query.size || 5;
+  const indexName = "idx:items";
+  const cleanedTerm = term
+    .replaceAll(/[^a-zA-Z0-9 ]/g, "")
+    .trim()
+    .split(" ")
+    .map((word) =>(word?`*${word}*`:''))
+    .join(' ');
+  if(cleanedTerm.length===0){
+    return [];
+  }
+  const query = `@name:(${cleanedTerm}=>{$weight:5.0})`;
+  const result = await searchItems(redisClient,indexName,query, size);
+  res.status(200).json(result);
+};
+module.exports = { addItem, getItem, updateView, deleteItem ,getView,getAllItems,getLikes,searchTerm };
