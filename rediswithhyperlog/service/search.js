@@ -34,6 +34,7 @@ const searchItems = async (redisClient,indexName,query, size = 5) => {
   return result.documents.map((doc) => doc.value.name);
 }
 
+
 module.exports = {
   createIndex,
   searchItems,

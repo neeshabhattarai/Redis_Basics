@@ -99,4 +99,5 @@ const searchTerm = async (req, res) => {
   const result = await searchItems(redisClient,indexName,query, size);
   res.status(200).json(result);
 };
+
 module.exports = { addItem, getItem, updateView, deleteItem ,getView,getAllItems,getLikes,searchTerm };
